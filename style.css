@@ -1,0 +1,90 @@
+:root{
+    --bg-color:#F5F5F5;
+    --active:#578dec;
+}
+html{
+    font-size: 20px;
+    width:100vw;
+    overflow-x:hidden;
+}
+body{
+    background-size: cover;
+    background-color: var(--bg-color);
+    position: relative;
+    min-height: 100vh;
+}
+
+input[type=radio]{
+    display: none;
+}
+label{
+    color: white;
+}
+input[type=radio]:checked +label{
+    color: var(--active);
+}
+label:hover {
+    transition: 300ms;
+    cursor: pointer;
+    color: var(--active);
+}
+button{
+    box-shadow: none !important;
+}
+ul a{
+    box-shadow: none !important;
+    color: #30475E !important;
+}
+.page-item.active .page-link {
+    color: white !important;
+    background-color: var(--active) !important;
+    outline: none !important;
+}
+.card{
+    border: 1px solid #30475E;
+    width: 16rem;
+    display: inline-block;
+    max-height: max-content;
+}
+.main-content{
+    margin: 0 auto;
+    width: 90%;
+    padding-bottom: 100px;
+}
+
+.cards{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: flex-start;
+}
+.pages{
+    position: absolute;
+    left:50%;
+    right: 50%;
+    bottom: 1rem;
+}
+.loader-block{
+    position: absolute;
+    top:50%;
+    left:50%;
+    transform:translate(-50%, -50%);
+    z-index: 1;
+}
+.loader {
+    opacity: 0.5;
+    border: 0.4rem solid #cbcbcb;
+    border-top: 0.4rem solid var(--active);
+    border-radius: 50%;
+    width: 5rem;
+    height: 5rem;
+    animation: spin 0.5s linear infinite;
+}
+.loader_hide{
+    display:none;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
