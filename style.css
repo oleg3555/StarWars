@@ -1,6 +1,7 @@
 :root{
     --bg-color:#F5F5F5;
     --active:#578dec;
+    --light-gray:#cbcbcb;
 }
 html{
     font-size: 20px;
@@ -73,18 +74,23 @@ ul a{
 }
 .loader {
     opacity: 0.5;
-    border: 0.4rem solid #cbcbcb;
+    border: 0.4rem solid var(--light-gray);
     border-top: 0.4rem solid var(--active);
     border-radius: 50%;
     width: 5rem;
     height: 5rem;
     animation: spin 0.5s linear infinite;
 }
-.loader_hide{
+.hide{
     display:none;
 }
 
 @keyframes spin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
+}
+.title{
+    text-align: center;
+    display: grid;
+    grid-template-columns: 90% 10%;
 }
