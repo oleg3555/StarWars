@@ -45,7 +45,7 @@ pages.addEventListener('click', ({target}) => {
 
 function collapseListener(event) {
     if (event.target.closest('.btn')) {
-        resultBlock.removeEventListener('click', collapseListener)
+        resultBlock.removeEventListener('click', collapseListener);
         resultBlock.querySelectorAll('.btn').forEach(item => {
             if (!item.classList.contains('collapsed')) {
                 item.click();
@@ -70,12 +70,9 @@ function resetSearch() {
     }
 }
 
-searchButton.addEventListener('click', (event) => {
-    pages.querySelectorAll('.page-item').forEach(item => {
-        if (item.classList.contains('active')) {
-            currentPage = item.getAttribute('data-index');
-        }
-    });
+searchButton.addEventListener('click', () => {
+    currentPage = [...pages.querySelectorAll('.page-item')].find(item => item.classList.contains('active')).getAttribute('data-index');
+    pages.innerHTML = null;
     const selectedCategory = getSelectedCategory();
     if (searchInput.value) {
         getData(`${selectedCategory}/?search=${searchInput.value}`).then((data) => {
@@ -83,15 +80,15 @@ searchButton.addEventListener('click', (event) => {
                 renderCards(data, selectedCategory);
                 addPagination(data.count);
             } else {
-                pages.innerHTML=null;
                 loader.classList.add(MODIFICATORS.hide);
-                resultBlock.innerHTML+='<span class="h3">Nothing Found</span>';
+                resultBlock.innerHTML += '<span class="h3">Nothing Found</span>';
             }
         })
         toggleSearch();
     }
 })
-cancelSearchButton.addEventListener('click', (event) => {
+cancelSearchButton.addEventListener('click', () => {
+    pages.innerHTML = null;
     const selectedCategory = getSelectedCategory();
     getData(selectedCategory).then((data) => {
         addPagination(data.count);
@@ -105,16 +102,6 @@ cancelSearchButton.addEventListener('click', (event) => {
     resetSearch();
 })
 
-function addPagination(value) {
-    pages.innerHTML = null;
-    const pagesCount = Math.ceil(value / 10);
-    for (let i = 0; i < pagesCount; i++) {
-        pages.innerHTML += `<li class="page-item" data-index="${i + 1}"><a class="page-link" href="#">${i + 1}</a></li>`;
-    }
-    if (value) {
-        pages.querySelector('.page-item').classList.add('active');
-    }
-}
 
 function addCardLayout(title, layout, index) {
     const card = document.createElement('div');
@@ -148,6 +135,16 @@ function renderCards({results}, category) {
     })
 }
 
+function addPagination(value) {
+    pages.innerHTML = null;
+    const pagesCount = Math.ceil(value / 10);
+    for (let i = 0; i < pagesCount; i++) {
+        pages.innerHTML += `<li class="page-item" data-index="${i + 1}"><a class="page-link" href="#">${i + 1}</a></li>`;
+    }
+    if (pagesCount) {
+        pages.querySelector('.page-item').classList.add('active');
+    }
+}
 
 headerNavbar.addEventListener('click', ({target}) => {
     if (target.tagName === 'LABEL') {
