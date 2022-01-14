@@ -151,6 +151,7 @@ headerNavbar.addEventListener('click', ({target}) => {
         const category = target.textContent.toLowerCase().trim();
         localStorage.setItem(LocalStorageKeys.category, category);
         resetSearch();
+        pages.innerHTML = null;
         getData(category).then((data) => {
             renderCards(data, category)
             addPagination(data.count);
