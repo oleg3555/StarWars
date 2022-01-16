@@ -1,14 +1,8 @@
-const CATEGORIES = {
-    planets: 'planets',
-    people: 'people',
-    starships: 'starships',
-    vehicles: 'vehicles'
-}
 const MODIFICATORS = {
     hide: 'hide',
 }
 const LIBRARIES = {
-    'people': {
+    people: {
         height: 'Height',
         mass: 'Mass',
         hair_color: 'Hair color',
@@ -17,7 +11,7 @@ const LIBRARIES = {
         birth_year: "Year of birth",
         gender: 'Gender',
     },
-    'planets': {
+    planets: {
         orbital_period: 'Orbital Period',
         climate: 'Climate',
         diameter: 'Diameter',
@@ -27,7 +21,7 @@ const LIBRARIES = {
         population: 'Population',
         rotation_period: 'Rotation Period'
     },
-    'starships': {
+    starships: {
         model: 'Model',
         cost_in_credits: 'Price',
         length: 'Length',
@@ -37,7 +31,7 @@ const LIBRARIES = {
         MGLT: 'MGLT',
         hyperdrive_rating: 'Hyperdrive rating'
     },
-    'vehicles': {
+    vehicles: {
         model: 'Model',
         cost_in_credits: 'Price',
         length: 'Length',
@@ -48,3 +42,4 @@ const LIBRARIES = {
         vehicle_class: 'Vehicle class'
     }
 }
+const CATEGORIES = Object.keys(LIBRARIES);

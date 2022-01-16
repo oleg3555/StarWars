@@ -3,11 +3,11 @@ const resultBlock = document.getElementById('results');
 const pages = document.querySelector('.pagination');
 const searchButton = document.getElementById('search');
 const searchInput = document.querySelector('.form-control');
-const cancelSearchButton = document.getElementById('cancel');
 const loader = document.querySelector('.loader');
 let currentPage = 1;
 const maxInfoLinesCount = 5;
 const API_URL = 'https://swapi.dev/api/';
+let searchMode = false;
 const LocalStorageKeys = {
     category: 'category'
 }
@@ -43,38 +43,25 @@ pages.addEventListener('click', ({target}) => {
     }
 })
 
-function collapseListener(event) {
-    if (event.target.closest('.btn')) {
-        resultBlock.removeEventListener('click', collapseListener);
+
+resultBlock.addEventListener('click', (event) => {
+    if (event.target.closest('.btn') && event.isTrusted) {
         resultBlock.querySelectorAll('.btn').forEach(item => {
             if (!item.classList.contains('collapsed')) {
                 item.click();
             }
         })
-        resultBlock.addEventListener('click', collapseListener)
     }
-}
+});
 
-resultBlock.addEventListener('click', collapseListener);
-
-function toggleSearch() {
-    searchButton.classList.toggle(MODIFICATORS.hide);
-    cancelSearchButton.classList.toggle(MODIFICATORS.hide);
-    searchInput.disabled = !searchInput.disabled;
-}
-
-function resetSearch() {
-    searchInput.value = '';
-    if (searchInput.disabled) {
-        toggleSearch();
+searchButton.addEventListener('click', (event) => {
+    if (!searchMode) {
+        currentPage = [...pages.querySelectorAll('.page-item')].find(item => item.classList.contains('active')).getAttribute('data-index');
     }
-}
-
-searchButton.addEventListener('click', () => {
-    currentPage = [...pages.querySelectorAll('.page-item')].find(item => item.classList.contains('active')).getAttribute('data-index');
-    pages.innerHTML = null;
-    const selectedCategory = getSelectedCategory();
     if (searchInput.value) {
+        searchMode = true;
+        pages.innerHTML = null;
+        const selectedCategory = getSelectedCategory();
         getData(`${selectedCategory}/?search=${searchInput.value}`).then((data) => {
             if (data.count) {
                 renderCards(data, selectedCategory);
@@ -84,24 +71,24 @@ searchButton.addEventListener('click', () => {
                 resultBlock.innerHTML += '<span class="h3">Nothing Found</span>';
             }
         })
-        toggleSearch();
     }
 })
-cancelSearchButton.addEventListener('click', () => {
-    pages.innerHTML = null;
-    const selectedCategory = getSelectedCategory();
-    getData(selectedCategory).then((data) => {
-        addPagination(data.count);
-        renderCards(data, selectedCategory);
-        pages.querySelectorAll('.page-item').forEach(item => {
-            if (item.getAttribute('data-index') === currentPage) {
-                item.click();
-            }
-        })
-    });
-    resetSearch();
-})
 
+searchInput.addEventListener('input', () => {
+    if (searchMode && !searchInput.value) {
+        searchMode = false;
+        const selectedCategory = getSelectedCategory();
+        getData(selectedCategory).then((data => {
+            renderCards(data, selectedCategory)
+            addPagination(data.count);
+            pages.querySelectorAll('.page-item').forEach(item => {
+                if (item.getAttribute('data-index') === currentPage) {
+                    item.click();
+                }
+            })
+        }))
+    }
+})
 
 function addCardLayout(title, layout, index) {
     const card = document.createElement('div');
@@ -150,10 +137,11 @@ headerNavbar.addEventListener('click', ({target}) => {
     if (target.tagName === 'LABEL') {
         const category = target.textContent.toLowerCase().trim();
         localStorage.setItem(LocalStorageKeys.category, category);
-        resetSearch();
         pages.innerHTML = null;
+        searchMode = false;
+        searchInput.value = '';
         getData(category).then((data) => {
-            renderCards(data, category)
+            renderCards(data, category);
             addPagination(data.count);
         });
     }
