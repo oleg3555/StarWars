@@ -77,6 +77,7 @@ searchButton.addEventListener('click', (event) => {
 searchInput.addEventListener('input', () => {
     if (searchMode && !searchInput.value) {
         searchMode = false;
+        pages.innerHTML=null;
         const selectedCategory = getSelectedCategory();
         getData(selectedCategory).then((data => {
             renderCards(data, selectedCategory)
