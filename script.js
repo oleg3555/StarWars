@@ -11,8 +11,8 @@ let searchMode = false;
 const LocalStorageKeys = {
     category: 'category'
 }
-
 const selectedCategory = localStorage.getItem(LocalStorageKeys.category) || CATEGORIES.people;
+
 document.addEventListener("DOMContentLoaded", () => {
     headerNavbar.querySelector(`#${selectedCategory}`).checked = true;
     getData(selectedCategory).then((data) => {

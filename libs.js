@@ -1,3 +1,9 @@
+const CATEGORIES = {
+    planets: 'planets',
+    people: 'people',
+    starships: 'starships',
+    vehicles: 'vehicles'
+}
 const MODIFICATORS = {
     hide: 'hide',
 }
@@ -42,4 +48,3 @@ const LIBRARIES = {
         vehicle_class: 'Vehicle class'
     }
 }
-const CATEGORIES = Object.keys(LIBRARIES);
