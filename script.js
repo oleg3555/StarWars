@@ -1,13 +1,15 @@
 const headerNavbar = document.getElementById('navbarSupportedContent');
-const resultBlock = document.getElementById('results');
+const cardsContainer = document.getElementById('results');
 const pages = document.querySelector('.pagination');
 const searchButton = document.getElementById('search');
 const searchInput = document.querySelector('.form-control');
 const loader = document.querySelector('.loader');
+
 let currentPage = 1;
-const maxInfoLinesCount = 5;
+const infoLinesMaxCount = 5;
 const API_URL = 'https://swapi.dev/api/';
 let searchMode = false;
+
 const LocalStorageKeys = {
     category: 'category'
 }
@@ -18,14 +20,30 @@ document.addEventListener("DOMContentLoaded", () => {
     getData(selectedCategory).then((data) => {
         renderCards(data, selectedCategory);
         addPagination(data.count);
-    })
+    });
 });
 
+function clearPage() {
+    pages.innerHTML = null;
+    cardsContainer.innerHTML = null;
+}
+
+function loaderOn() {
+    loader.classList.remove(MODIFICATORS.hide);
+}
+
+function loaderOff() {
+    loader.classList.add(MODIFICATORS.hide);
+}
 
 function getData(path) {
-    resultBlock.innerHTML = null;
-    loader.classList.remove(MODIFICATORS.hide);
-    return fetch(`${API_URL}${path}`).then((res) => res.json());
+    loaderOn();
+    return fetch(`${API_URL}${path}`).then((res) => res.json())
+        .catch(() => {
+            loaderOff();
+            cardsContainer.innerHTML = '<span class="h3">SERVER ERROR</span>';
+        })
+        .finally(() => loaderOff());
 }
 
 function getSelectedCategory() {
@@ -38,15 +56,16 @@ pages.addEventListener('click', ({target}) => {
         pages.querySelectorAll('li').forEach(item => item.classList.remove('active'));
         pageItem.classList.add('active');
         const selectedCategory = getSelectedCategory();
+        cardsContainer.innerHTML = null;
         getData(`${selectedCategory}/?page=${pageItem.getAttribute('data-index')}`)
             .then((data) => renderCards(data, selectedCategory));
     }
 })
 
 
-resultBlock.addEventListener('click', (event) => {
-    if (event.target.closest('.btn') && event.isTrusted) {
-        resultBlock.querySelectorAll('.btn').forEach(item => {
+cardsContainer.addEventListener('click', ({target, isTrusted}) => {
+    if (target.closest('.btn') && isTrusted) {
+        cardsContainer.querySelectorAll('.btn').forEach(item => {
             if (!item.classList.contains('collapsed')) {
                 item.click();
             }
@@ -60,15 +79,14 @@ searchButton.addEventListener('click', (event) => {
     }
     if (searchInput.value) {
         searchMode = true;
-        pages.innerHTML = null;
+        clearPage();
         const selectedCategory = getSelectedCategory();
         getData(`${selectedCategory}/?search=${searchInput.value}`).then((data) => {
             if (data.count) {
                 renderCards(data, selectedCategory);
                 addPagination(data.count);
             } else {
-                loader.classList.add(MODIFICATORS.hide);
-                resultBlock.innerHTML += '<span class="h3">Nothing Found</span>';
+                cardsContainer.innerHTML += '<span class="h3">Nothing Found</span>';
             }
         })
     }
@@ -77,8 +95,8 @@ searchButton.addEventListener('click', (event) => {
 searchInput.addEventListener('input', () => {
     if (searchMode && !searchInput.value) {
         searchMode = false;
-        pages.innerHTML=null;
         const selectedCategory = getSelectedCategory();
+        clearPage();
         getData(selectedCategory).then((data => {
             renderCards(data, selectedCategory)
             addPagination(data.count);
@@ -103,18 +121,16 @@ function addCardLayout(title, layout, index) {
                 </button>
             </p>
             <div class="text">
-                ${layout.splice(0, maxInfoLinesCount).join('')}
+                ${layout.splice(0, infoLinesMaxCount).join('')}
             </div>
             <div class="collapse text" id="cardInfo${index}">
                 ${layout.join('')}
             </div>
         </div>`;
-    resultBlock.appendChild(card);
+    cardsContainer.appendChild(card);
 }
 
 function renderCards({results}, category) {
-    loader.classList.add(MODIFICATORS.hide);
-    resultBlock.innerHTML = null;
     const lib = LIBRARIES[category];
     results.forEach((item, index) => {
         const cardLayout = Object.keys(lib).map(key => `<span class="border-bottom border-dark">${lib[key]}:</span>&nbsp;${item[key]}<br/>`);
@@ -138,7 +154,7 @@ headerNavbar.addEventListener('click', ({target}) => {
     if (target.tagName === 'LABEL') {
         const category = target.textContent.toLowerCase().trim();
         localStorage.setItem(LocalStorageKeys.category, category);
-        pages.innerHTML = null;
+        clearPage();
         searchMode = false;
         searchInput.value = '';
         getData(category).then((data) => {
