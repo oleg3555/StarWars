@@ -56,18 +56,18 @@ ul a {
     display: inline-block;
     min-height: 16rem;
 }
-.main-content {
+
+
+.cards {
     margin: 0 auto;
     width: 90%;
     padding-bottom: 5rem;
-}
-
-.cards {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
     align-items: flex-start;
 }
+
 .pages {
     position: absolute;
     left: 50%;
@@ -75,7 +75,7 @@ ul a {
     bottom: 1rem;
 }
 
-.loader-block {
+.wrapper {
     position: absolute;
     top: 50%;
     left: 50%;

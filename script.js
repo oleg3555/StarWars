@@ -6,7 +6,7 @@ const searchInput = document.querySelector('.form-control');
 const loader = document.querySelector('.loader');
 
 let currentPage = 1;
-const infoLinesMaxCount = 5;
+const cardsInfoMaxLines = 5;
 const API_URL = 'https://swapi.dev/api/';
 let searchMode = false;
 
@@ -28,22 +28,21 @@ function clearPage() {
     cardsContainer.innerHTML = null;
 }
 
-function loaderOn() {
+function showLoader() {
     loader.classList.remove(MODIFICATORS.hide);
 }
 
-function loaderOff() {
+function hideLoader() {
     loader.classList.add(MODIFICATORS.hide);
 }
 
 function getData(path) {
-    loaderOn();
+    showLoader();
     return fetch(`${API_URL}${path}`).then((res) => res.json())
         .catch(() => {
-            loaderOff();
             cardsContainer.innerHTML = '<span class="h3">SERVER ERROR</span>';
         })
-        .finally(() => loaderOff());
+        .finally(() => hideLoader());
 }
 
 function getSelectedCategory() {
@@ -114,14 +113,14 @@ function addCardLayout(title, layout, index) {
     card.className = 'card m-2';
     card.innerHTML = `<div class="card-body">
             <p class="title">
-                <span class="h5">${title}</span>
+                <span class="h5 mt-1">${title}</span>
                 <button class="btn collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#cardInfo${index}"
                         aria-expanded="false">
                     <i class="fas fa-angle-down"></i>
                 </button>
             </p>
             <div class="text">
-                ${layout.splice(0, infoLinesMaxCount).join('')}
+                ${layout.splice(0, cardsInfoMaxLines).join('')}
             </div>
             <div class="collapse text" id="cardInfo${index}">
                 ${layout.join('')}
@@ -153,13 +152,16 @@ function addPagination(value) {
 headerNavbar.addEventListener('click', ({target}) => {
     if (target.tagName === 'LABEL') {
         const category = target.textContent.toLowerCase().trim();
-        localStorage.setItem(LocalStorageKeys.category, category);
-        clearPage();
-        searchMode = false;
-        searchInput.value = '';
-        getData(category).then((data) => {
-            renderCards(data, category);
-            addPagination(data.count);
-        });
+        console.log(category)
+        if (category !== getSelectedCategory()) {
+            localStorage.setItem(LocalStorageKeys.category, category);
+            clearPage();
+            searchMode = false;
+            searchInput.value = '';
+            getData(category).then((data) => {
+                renderCards(data, category);
+                addPagination(data.count);
+            });
+        }
     }
 })
